@@ -24,7 +24,6 @@ import {
   getDownloadURL 
 } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-storage.js';
 
-// Firebase configuration (user needs to replace with actual config)
 const firebaseConfig = {
   apiKey: "AIzaSyCSorCCCCKjeFRk-vV-AVllibqk2X-OvBE",
   authDomain: "weena-2a4b1.firebaseapp.com",
@@ -33,6 +32,9 @@ const firebaseConfig = {
   messagingSenderId: "705991665506",
   appId: "1:705991665506:web:f8f1de859440da081fae3b"
 };
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
 
 // Initialize Firebase
 let app, auth, db, storage;
