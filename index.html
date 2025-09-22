@@ -3,25 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nossa História de Amor</title>
+    <title>Nossa História</title>
     <link rel="stylesheet" href="style.css">
-    <!-- Firebase SDK v9+ -->
-    <script type="module" src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js"></script>
-    <script type="module" src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js"></script>
-    <script type="module" src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js"></script>
-    <script type="module" src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage.js"></script>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    
+    <!-- Google APIs -->
+    <script src="https://apis.google.com/js/api.js"></script>
 </head>
 <body>
     <!-- Login Screen -->
     <div id="loginScreen" class="login-container">
         <div class="login-card">
-            <h1>Nossa História de Amor</h1>
+            <h1>Nossa História</h1>
             <p class="login-subtitle">Entre para reviver nossos momentos especiais</p>
             
             <form id="loginForm" class="login-form">
                 <div class="form-group">
                     <label for="username" class="form-label">Usuário</label>
-                    <input type="text" id="username" class="form-control" required>
+                    <input type="text" id="username" class="form-control" required placeholder="Wendel ou Nathalia">
                 </div>
                 
                 <div class="form-group">
@@ -41,7 +43,7 @@
         <!-- Header -->
         <header class="app-header">
             <div class="container">
-                <h1>Nossa Linha do Tempo</h1>
+                <h1>A nossa história, em detalhes</h1>
                 <div class="header-actions">
                     <span id="currentUser" class="user-name"></span>
                     <button id="addEventBtn" class="btn btn--primary">Adicionar Evento</button>
@@ -49,6 +51,31 @@
                 </div>
             </div>
         </header>
+
+        <!-- Connection Status -->
+        <div id="connectionStatus" class="connection-status hidden">
+            <div class="container">
+                <div class="status-message">
+                    <span id="statusIcon">⚠️</span>
+                    <span id="statusText">Conectando aos serviços...</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Configuration Notice -->
+        <div id="configNotice" class="config-notice hidden">
+            <div class="container">
+                <div class="config-message">
+                    <h3>⚙️ Configuração Necessária</h3>
+                    <p>Para usar todas as funcionalidades, configure Firebase e Google Drive API no arquivo app.js:</p>
+                    <ul>
+                        <li>Substitua as configurações do Firebase</li>
+                        <li>Configure as credenciais do Google Drive API</li>
+                    </ul>
+                    <button id="hideConfigNotice" class="btn btn--outline btn--sm">Entendi</button>
+                </div>
+            </div>
+        </div>
 
         <!-- Timeline -->
         <main class="timeline-container">
@@ -95,22 +122,29 @@
                 <div class="form-group">
                     <label for="eventPhotos" class="form-label">Fotos</label>
                     <input type="file" id="eventPhotos" class="form-control" multiple accept="image/*">
-                    <small class="form-text">Selecione até 4 fotos</small>
+                    <small class="form-text">Selecione até 4 fotos (max 10MB cada)</small>
+                    <div id="photoPreview" class="file-preview"></div>
                 </div>
                 
                 <div class="form-group">
                     <label for="eventVideo" class="form-label">Vídeo/GIF</label>
                     <input type="file" id="eventVideo" class="form-control" accept="video/*,image/gif">
+                    <small class="form-text">Máximo 25MB</small>
+                    <div id="videoPreview" class="file-preview"></div>
                 </div>
                 
                 <div class="form-group">
                     <label for="eventAudio" class="form-label">Música/Áudio</label>
                     <input type="file" id="eventAudio" class="form-control" accept="audio/*">
+                    <small class="form-text">Máximo 15MB</small>
+                    <div id="audioPreview" class="file-preview"></div>
                 </div>
                 
                 <div class="modal-footer">
                     <button type="button" id="cancelAdd" class="btn btn--outline">Cancelar</button>
-                    <button type="submit" class="btn btn--primary">Salvar Momento</button>
+                    <button type="submit" id="submitBtn" class="btn btn--primary">
+                        <span id="submitText">Salvar Momento</span>
+                    </button>
                 </div>
             </form>
         </div>
@@ -119,6 +153,43 @@
     <!-- Current Audio Player (Hidden) -->
     <audio id="currentAudio" loop></audio>
 
-    <script type="module" src="app.js"></script>
+    <!-- Progress Modal -->
+    <div id="progressModal" class="modal hidden">
+        <div class="modal-overlay"></div>
+        <div class="modal-content progress-modal">
+            <div class="progress-content">
+                <div class="spinner"></div>
+                <p id="progressText">Enviando arquivos para o Google Drive...</p>
+                <div class="progress-bar">
+                    <div id="progressFill" class="progress-fill"></div>
+                </div>
+                <p id="progressDetail" class="progress-detail"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error Modal -->
+    <div id="errorModal" class="modal hidden">
+        <div class="modal-overlay"></div>
+        <div class="modal-content error-modal">
+            <div class="modal-header">
+                <h2>⚠️ Erro</h2>
+                <button id="closeErrorModal" class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="errorMessage">Ocorreu um erro inesperado.</p>
+                <div id="errorDetails" class="error-details hidden">
+                    <h4>Detalhes técnicos:</h4>
+                    <pre id="errorDetailText"></pre>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="showErrorDetails" class="btn btn--outline btn--sm">Mostrar Detalhes</button>
+                <button id="closeError" class="btn btn--primary">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
 </body>
 </html>

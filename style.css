@@ -817,6 +817,68 @@ select.form-control {
   font-weight: var(--font-weight-medium);
 }
 
+/* Connection Status & Config Notice */
+.connection-status, .config-notice {
+  background: var(--color-bg-3);
+  border-bottom: 1px solid var(--color-border);
+  padding: var(--space-12) 0;
+  animation: slideDown 0.3s ease-out;
+}
+
+.connection-status.error {
+  background: var(--color-bg-4);
+}
+
+.connection-status.success {
+  background: var(--color-bg-3);
+}
+
+.status-message {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+  justify-content: center;
+}
+
+.config-notice {
+  background: var(--color-bg-2);
+}
+
+.config-message {
+  text-align: center;
+  color: var(--color-text);
+}
+
+.config-message h3 {
+  margin-bottom: var(--space-12);
+  font-size: var(--font-size-lg);
+}
+
+.config-message ul {
+  text-align: left;
+  max-width: 400px;
+  margin: var(--space-16) auto;
+  padding-left: var(--space-20);
+}
+
+.config-message li {
+  margin-bottom: var(--space-8);
+  font-size: var(--font-size-sm);
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
 /* Timeline Styles */
 .timeline-container {
   position: relative;
@@ -927,6 +989,15 @@ select.form-control {
   background: linear-gradient(90deg, var(--color-primary), var(--color-teal-300));
 }
 
+.event-card.syncing::before {
+  background: linear-gradient(90deg, var(--color-warning), var(--color-orange-400));
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.event-card.sync-error::before {
+  background: linear-gradient(90deg, var(--color-error), var(--color-red-400));
+}
+
 .event-date {
   color: var(--color-text-secondary);
   font-size: var(--font-size-sm);
@@ -986,6 +1057,25 @@ select.form-control {
   margin-bottom: var(--space-16);
 }
 
+.event-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+  margin-top: var(--space-12);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+}
+
+.event-author {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.event-author::before {
+  content: "👤";
+}
+
 .event-media {
   width: 200px;
   height: 150px;
@@ -997,6 +1087,7 @@ select.form-control {
   justify-content: center;
   color: var(--color-text-secondary);
   font-size: var(--font-size-sm);
+  position: relative;
 }
 
 .event-media video,
@@ -1004,6 +1095,20 @@ select.form-control {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.event-media.loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin: -10px 0 0 -10px;
+  border: 2px solid var(--color-border);
+  border-top: 2px solid var(--color-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
 }
 
 .event-photos {
@@ -1019,13 +1124,14 @@ select.form-control {
   object-fit: cover;
   border-radius: var(--radius-sm);
   transition: transform var(--duration-fast) var(--ease-standard);
+  cursor: pointer;
 }
 
 .event-photos img:hover {
   transform: scale(1.05);
 }
 
-/* Modal Styles - Fixed for proper interaction */
+/* Modal Styles */
 .modal {
   position: fixed;
   top: 0;
@@ -1123,13 +1229,146 @@ select.form-control {
   flex-shrink: 0;
 }
 
+/* Error Modal Styles */
+.error-modal {
+  max-width: 500px;
+}
+
+.error-details {
+  margin-top: var(--space-16);
+  padding: var(--space-12);
+  background: var(--color-bg-1);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+}
+
+.error-details h4 {
+  margin-bottom: var(--space-8);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.error-details pre {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  overflow-x: auto;
+}
+
+/* File Upload and Preview Styles */
+.file-preview {
+  margin-top: var(--space-12);
+  display: grid;
+  gap: var(--space-8);
+}
+
+.photo-preview {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+  gap: var(--space-8);
+  max-width: 320px;
+}
+
+.preview-item {
+  position: relative;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: var(--color-bg-2);
+  border: 1px solid var(--color-border);
+}
+
+.preview-item img,
+.preview-item video {
+  width: 100%;
+  height: 80px;
+  object-fit: cover;
+  display: block;
+}
+
+.preview-item.audio {
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-8);
+}
+
+.preview-item.audio::before {
+  content: "🎵";
+  font-size: var(--font-size-lg);
+  margin-right: var(--space-8);
+}
+
+.preview-remove {
+  position: absolute;
+  top: var(--space-4);
+  right: var(--space-4);
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: var(--font-size-xs);
+  line-height: 1;
+}
+
+.preview-remove:hover {
+  background: rgba(0, 0, 0, 0.9);
+}
+
+/* Progress Modal */
+.progress-modal {
+  max-width: 450px;
+  max-height: none;
+}
+
+.progress-content {
+  text-align: center;
+  padding: var(--space-32);
+}
+
+.progress-content .spinner {
+  margin: 0 auto var(--space-16);
+}
+
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background: var(--color-bg-2);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  margin-top: var(--space-16);
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--color-primary);
+  border-radius: var(--radius-full);
+  transition: width var(--duration-normal) var(--ease-standard);
+  width: 0%;
+}
+
+.progress-detail {
+  margin-top: var(--space-12);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+/* Form improvements */
 .form-text {
   color: var(--color-text-secondary);
   font-size: var(--font-size-xs);
   margin-top: var(--space-4);
 }
 
-/* Form control improvements */
 .form-control {
   background-color: var(--color-surface);
   border: 1px solid var(--color-border);
@@ -1140,17 +1379,6 @@ select.form-control {
   border-color: var(--color-primary);
   outline: none;
   box-shadow: 0 0 0 2px rgba(var(--color-teal-500-rgb), 0.2);
-}
-
-/* Date input specific styles */
-input[type="date"].form-control {
-  position: relative;
-}
-
-input[type="date"].form-control::-webkit-calendar-picker-indicator {
-  color: var(--color-text);
-  background: none;
-  cursor: pointer;
 }
 
 /* Loading Spinner */
@@ -1188,6 +1416,50 @@ input[type="date"].form-control::-webkit-calendar-picker-indicator {
 .empty-state h3 {
   color: var(--color-text);
   margin-bottom: var(--space-16);
+}
+
+/* Audio Status Indicator */
+.event-card.playing {
+  box-shadow: 0 0 20px rgba(var(--color-teal-500-rgb), 0.3);
+}
+
+.event-card.playing::before {
+  background: linear-gradient(90deg, var(--color-primary), var(--color-success));
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+/* Button states */
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.btn--loading {
+  position: relative;
+}
+
+.btn--loading::after {
+  content: '';
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  top: 50%;
+  left: 50%;
+  margin: -7px 0 0 -7px;
+  border: 2px solid transparent;
+  border-top: 2px solid currentColor;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.btn--loading span {
+  opacity: 0;
 }
 
 /* Responsive Design */
@@ -1242,6 +1514,22 @@ input[type="date"].form-control::-webkit-calendar-picker-indicator {
   .modal-content {
     max-height: 95vh;
   }
+
+  .photo-preview {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .config-message ul {
+    text-align: center;
+    list-style: none;
+    padding-left: 0;
+  }
+
+  .config-message li::before {
+    content: "• ";
+    color: var(--color-primary);
+    font-weight: bold;
+  }
 }
 
 @media (max-width: 480px) {
@@ -1273,26 +1561,27 @@ input[type="date"].form-control::-webkit-calendar-picker-indicator {
   .modal-footer {
     padding: var(--space-16);
   }
+
+  .photo-preview {
+    grid-template-columns: 1fr;
+  }
+
+  .progress-modal {
+    max-width: 90vw;
+  }
+
+  .progress-content {
+    padding: var(--space-20);
+  }
 }
 
-/* Audio Status Indicator */
-.event-card.playing {
-  box-shadow: 0 0 20px rgba(var(--color-teal-500-rgb), 0.3);
-}
-
-.event-card.playing::before {
-  background: linear-gradient(90deg, var(--color-primary), var(--color-success));
-  animation: pulse 2s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.6; }
-}
-
-/* Ensure proper stacking context */
+/* Utility classes */
 .hidden {
   display: none !important;
+}
+
+.text-center {
+  text-align: center;
 }
 
 /* Button focus improvements */
