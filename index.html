@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nossa História de Amor</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Firebase SDK v9+ -->
+    <script type="module" src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage.js"></script>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-container">
+        <div class="login-card">
+            <h1>Nossa História de Amor</h1>
+            <p class="login-subtitle">Entre para reviver nossos momentos especiais</p>
+            
+            <form id="loginForm" class="login-form">
+                <div class="form-group">
+                    <label for="username" class="form-label">Usuário</label>
+                    <input type="text" id="username" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password" class="form-label">Senha</label>
+                    <input type="password" id="password" class="form-control" required>
+                </div>
+                
+                <button type="submit" class="btn btn--primary btn--full-width">Entrar</button>
+                
+                <div id="loginError" class="error-message hidden"></div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main Application -->
+    <div id="mainApp" class="hidden">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="container">
+                <h1>Nossa Linha do Tempo</h1>
+                <div class="header-actions">
+                    <span id="currentUser" class="user-name"></span>
+                    <button id="addEventBtn" class="btn btn--primary">Adicionar Evento</button>
+                    <button id="logoutBtn" class="btn btn--outline">Sair</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Timeline -->
+        <main class="timeline-container">
+            <div class="timeline-line"></div>
+            <div id="timeline" class="timeline">
+                <div id="loadingSpinner" class="loading-spinner">
+                    <div class="spinner"></div>
+                    <p>Carregando nossos momentos...</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add Event Modal -->
+    <div id="addEventModal" class="modal hidden">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Adicionar Novo Momento</h2>
+                <button id="closeModal" class="modal-close">&times;</button>
+            </div>
+            
+            <form id="addEventForm" class="modal-body">
+                <div class="form-group">
+                    <label for="eventDate" class="form-label">Data do Evento</label>
+                    <input type="date" id="eventDate" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="eventTitle" class="form-label">Título</label>
+                    <input type="text" id="eventTitle" class="form-control" required placeholder="Ex: Nosso Primeiro Encontro">
+                </div>
+                
+                <div class="form-group">
+                    <label for="eventLocation" class="form-label">Local</label>
+                    <input type="text" id="eventLocation" class="form-control" placeholder="Ex: Café Belle Époque">
+                </div>
+                
+                <div class="form-group">
+                    <label for="eventDescription" class="form-label">Descrição</label>
+                    <textarea id="eventDescription" class="form-control" rows="4" required placeholder="Conte sobre esse momento especial..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="eventPhotos" class="form-label">Fotos</label>
+                    <input type="file" id="eventPhotos" class="form-control" multiple accept="image/*">
+                    <small class="form-text">Selecione até 4 fotos</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="eventVideo" class="form-label">Vídeo/GIF</label>
+                    <input type="file" id="eventVideo" class="form-control" accept="video/*,image/gif">
+                </div>
+                
+                <div class="form-group">
+                    <label for="eventAudio" class="form-label">Música/Áudio</label>
+                    <input type="file" id="eventAudio" class="form-control" accept="audio/*">
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" id="cancelAdd" class="btn btn--outline">Cancelar</button>
+                    <button type="submit" class="btn btn--primary">Salvar Momento</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Current Audio Player (Hidden) -->
+    <audio id="currentAudio" loop></audio>
+
+    <script type="module" src="app.js"></script>
+</body>
+</html>
