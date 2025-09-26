@@ -3,193 +3,206 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nossa História</title>
+    <title>A Nossa História - Wendel & Nathalia</title>
     <link rel="stylesheet" href="style.css">
-    
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    
-    <!-- Google APIs -->
-    <script src="https://apis.google.com/js/api.js"></script>
+    <!-- Google Fonts para design romântico -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&family=Dancing+Script:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Font Awesome para ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <!-- Login Screen -->
-    <div id="loginScreen" class="login-container">
-        <div class="login-card">
-            <h1>Nossa História</h1>
-            <p class="login-subtitle">Entre para reviver nossos momentos especiais</p>
+    <!-- Tela de Login -->
+    <div id="loginScreen" class="login-screen">
+        <div class="login-container">
+            <div class="login-header">
+                <h1 class="login-title">A nossa História</h1>
+                <div class="hearts-decoration">
+                    <i class="fas fa-heart"></i>
+                    <i class="fas fa-heart"></i>
+                    <i class="fas fa-heart"></i>
+                </div>
+            </div>
             
             <form id="loginForm" class="login-form">
                 <div class="form-group">
                     <label for="username" class="form-label">Usuário</label>
-                    <input type="text" id="username" class="form-control" required placeholder="Wendel ou Nathalia">
+                    <select id="username" class="form-control login-input" required>
+                        <option value="">Escolha seu nome</option>
+                        <option value="wendel">Wendel</option>
+                        <option value="nathalia">Nathalia</option>
+                    </select>
                 </div>
                 
                 <div class="form-group">
                     <label for="password" class="form-label">Senha</label>
-                    <input type="password" id="password" class="form-control" required>
+                    <input type="password" id="password" class="form-control login-input" 
+                           placeholder="Digite a senha que os represente" required>
                 </div>
                 
-                <button type="submit" class="btn btn--primary btn--full-width">Entrar</button>
+                <button type="submit" class="btn btn--primary login-btn">
+                    <i class="fas fa-heart"></i>
+                    Entrar em Nossa História
+                </button>
                 
-                <div id="loginError" class="error-message hidden"></div>
+                <div id="loginError" class="login-error hidden"></div>
             </form>
         </div>
     </div>
 
-    <!-- Main Application -->
-    <div id="mainApp" class="hidden">
-        <!-- Header -->
-        <header class="app-header">
-            <div class="container">
-                <h1>A nossa história, em detalhes</h1>
-                <div class="header-actions">
-                    <span id="currentUser" class="user-name"></span>
-                    <button id="addEventBtn" class="btn btn--primary">Adicionar Evento</button>
-                    <button id="logoutBtn" class="btn btn--outline">Sair</button>
-                </div>
-            </div>
+    <!-- Timeline Principal -->
+    <div id="timelineScreen" class="timeline-screen hidden">
+        <header class="timeline-header">
+            <h1 class="timeline-title">Contando a Nossa História</h1>
+            <h2 class="timeline-subtitle">Wendel CM e Nathalia LFG</h2>
+            
+            <button id="addEventBtn" class="btn btn--primary add-event-btn">
+                <i class="fas fa-plus"></i>
+                Adicionar Momento Especial
+            </button>
         </header>
 
-        <!-- Connection Status -->
-        <div id="connectionStatus" class="connection-status hidden">
-            <div class="container">
-                <div class="status-message">
-                    <span id="statusIcon">⚠️</span>
-                    <span id="statusText">Conectando aos serviços...</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Configuration Notice -->
-        <div id="configNotice" class="config-notice hidden">
-            <div class="container">
-                <div class="config-message">
-                    <h3>⚙️ Configuração Necessária</h3>
-                    <p>Para usar todas as funcionalidades, configure Firebase e Google Drive API no arquivo app.js:</p>
-                    <ul>
-                        <li>Substitua as configurações do Firebase</li>
-                        <li>Configure as credenciais do Google Drive API</li>
-                    </ul>
-                    <button id="hideConfigNotice" class="btn btn--outline btn--sm">Entendi</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Timeline -->
         <main class="timeline-container">
             <div class="timeline-line"></div>
-            <div id="timeline" class="timeline">
-                <div id="loadingSpinner" class="loading-spinner">
-                    <div class="spinner"></div>
-                    <p>Carregando nossos momentos...</p>
-                </div>
+            <div id="timelineEvents" class="timeline-events">
+                <!-- Events will be dynamically loaded here -->
+            </div>
+            
+            <div class="load-more-container">
+                <button id="loadMoreBtn" class="btn btn--outline load-more-btn hidden">
+                    <i class="fas fa-chevron-down"></i>
+                    Carregar Mais Momentos
+                </button>
             </div>
         </main>
+
+        <footer class="timeline-footer">
+            <p class="footer-text">Uma produção Worporation ©, para sua amada NLFG. Que esse amor dure eternamente.</p>
+        </footer>
     </div>
 
-    <!-- Add Event Modal -->
+    <!-- Modal para Adicionar Evento -->
     <div id="addEventModal" class="modal hidden">
         <div class="modal-overlay"></div>
         <div class="modal-content">
             <div class="modal-header">
-                <h2>Adicionar Novo Momento</h2>
-                <button id="closeModal" class="modal-close">&times;</button>
+                <h3 class="modal-title">Adicionar Novo Momento</h3>
+                <button class="modal-close" type="button">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
             
             <form id="addEventForm" class="modal-body">
                 <div class="form-group">
-                    <label for="eventDate" class="form-label">Data do Evento</label>
-                    <input type="date" id="eventDate" class="form-control" required>
+                    <label for="eventTitle" class="form-label">Título do Momento</label>
+                    <input type="text" id="eventTitle" class="form-control" placeholder="Ex: Nosso Primeiro Encontro" required>
                 </div>
                 
-                <div class="form-group">
-                    <label for="eventTitle" class="form-label">Título</label>
-                    <input type="text" id="eventTitle" class="form-control" required placeholder="Ex: Nosso Primeiro Encontro">
-                </div>
-                
-                <div class="form-group">
-                    <label for="eventLocation" class="form-label">Local</label>
-                    <input type="text" id="eventLocation" class="form-control" placeholder="Ex: Café Belle Époque">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="eventDate" class="form-label">Data</label>
+                        <input type="date" id="eventDate" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="eventLocation" class="form-label">Local</label>
+                        <input type="text" id="eventLocation" class="form-control" placeholder="Ex: Café da Esquina" required>
+                    </div>
                 </div>
                 
                 <div class="form-group">
                     <label for="eventDescription" class="form-label">Descrição</label>
-                    <textarea id="eventDescription" class="form-control" rows="4" required placeholder="Conte sobre esse momento especial..."></textarea>
+                    <textarea id="eventDescription" class="form-control" rows="4" 
+                              placeholder="Conte como foi esse momento especial..." required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="eventVideo" class="form-label">Vídeo Curto (opcional)</label>
+                    <input type="file" id="eventVideo" class="form-control" accept="video/*">
+                    <small class="form-hint">Máximo 50MB</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="eventAudio" class="form-label">Áudio (opcional)</label>
+                    <input type="file" id="eventAudio" class="form-control" accept="audio/*">
+                    <small class="form-hint">Máximo 10MB</small>
                 </div>
                 
                 <div class="form-group">
                     <label for="eventPhotos" class="form-label">Fotos</label>
-                    <input type="file" id="eventPhotos" class="form-control" multiple accept="image/*">
-                    <small class="form-text">Selecione até 4 fotos (max 10MB cada)</small>
-                    <div id="photoPreview" class="file-preview"></div>
+                    <input type="file" id="eventPhotos" class="form-control" accept="image/*" multiple>
+                    <small class="form-hint">Até 10 fotos, máximo 5MB cada</small>
                 </div>
                 
-                <div class="form-group">
-                    <label for="eventVideo" class="form-label">Vídeo/GIF</label>
-                    <input type="file" id="eventVideo" class="form-control" accept="video/*,image/gif">
-                    <small class="form-text">Máximo 25MB</small>
-                    <div id="videoPreview" class="file-preview"></div>
+                <div class="upload-progress hidden">
+                    <div class="progress-bar">
+                        <div class="progress-fill"></div>
+                    </div>
+                    <p class="progress-text">Enviando arquivos...</p>
                 </div>
                 
-                <div class="form-group">
-                    <label for="eventAudio" class="form-label">Música/Áudio</label>
-                    <input type="file" id="eventAudio" class="form-control" accept="audio/*">
-                    <small class="form-text">Máximo 15MB</small>
-                    <div id="audioPreview" class="file-preview"></div>
-                </div>
-                
-                <div class="modal-footer">
-                    <button type="button" id="cancelAdd" class="btn btn--outline">Cancelar</button>
-                    <button type="submit" id="submitBtn" class="btn btn--primary">
-                        <span id="submitText">Salvar Momento</span>
-                    </button>
-                </div>
             </form>
-        </div>
-    </div>
-
-    <!-- Current Audio Player (Hidden) -->
-    <audio id="currentAudio" loop></audio>
-
-    <!-- Progress Modal -->
-    <div id="progressModal" class="modal hidden">
-        <div class="modal-overlay"></div>
-        <div class="modal-content progress-modal">
-            <div class="progress-content">
-                <div class="spinner"></div>
-                <p id="progressText">Enviando arquivos para o Google Drive...</p>
-                <div class="progress-bar">
-                    <div id="progressFill" class="progress-fill"></div>
-                </div>
-                <p id="progressDetail" class="progress-detail"></p>
-            </div>
-        </div>
-    </div>
-
-    <!-- Error Modal -->
-    <div id="errorModal" class="modal hidden">
-        <div class="modal-overlay"></div>
-        <div class="modal-content error-modal">
-            <div class="modal-header">
-                <h2>⚠️ Erro</h2>
-                <button id="closeErrorModal" class="modal-close">&times;</button>
-            </div>
-            <div class="modal-body">
-                <p id="errorMessage">Ocorreu um erro inesperado.</p>
-                <div id="errorDetails" class="error-details hidden">
-                    <h4>Detalhes técnicos:</h4>
-                    <pre id="errorDetailText"></pre>
-                </div>
-            </div>
+            
             <div class="modal-footer">
-                <button id="showErrorDetails" class="btn btn--outline btn--sm">Mostrar Detalhes</button>
-                <button id="closeError" class="btn btn--primary">OK</button>
+                <button type="button" class="btn btn--outline" id="cancelEventBtn">Cancelar</button>
+                <button type="submit" form="addEventForm" class="btn btn--primary" id="saveEventBtn">
+                    <i class="fas fa-heart"></i>
+                    Salvar Momento
+                </button>
             </div>
         </div>
     </div>
 
+    <!-- Modal para Galeria de Fotos -->
+    <div id="photoGalleryModal" class="modal hidden">
+        <div class="modal-overlay"></div>
+        <div class="modal-content gallery-modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Galeria de Fotos</h3>
+                <button class="modal-close" type="button">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <div id="photoGalleryGrid" class="photo-gallery-grid">
+                    <!-- Photos will be dynamically loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Visualização de Foto Individual -->
+    <div id="photoViewModal" class="modal hidden">
+        <div class="modal-overlay"></div>
+        <div class="modal-content photo-view-modal">
+            <button class="modal-close photo-view-close" type="button">
+                <i class="fas fa-times"></i>
+            </button>
+            
+            <div class="photo-view-container">
+                <img id="photoViewImage" src="" alt="" class="photo-view-image">
+            </div>
+            
+            <div class="photo-navigation">
+                <button id="prevPhoto" class="btn btn--outline photo-nav-btn">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button id="nextPhoto" class="btn btn--outline photo-nav-btn">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Indicator -->
+    <div id="loadingIndicator" class="loading-indicator hidden">
+        <div class="loading-spinner"></div>
+        <p>Carregando momentos especiais...</p>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
     <script src="app.js"></script>
 </body>
 </html>
