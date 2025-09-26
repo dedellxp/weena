@@ -270,13 +270,15 @@ function createTimelineEventElement(event, isLeft) {
   eventDiv.className = `timeline-event ${isLeft ? 'left' : 'right'}`;
   eventDiv.dataset.eventId = event.id;
   
-  // Formata a data para exibição
-  const eventDate = new Date(event.date);
-  const formattedDate = eventDate.toLocaleDateString('pt-BR', {
-    day: '2-digit',
-    month: 'long',
-    year: 'numeric'
-  });
+function formatDateBR(dateStr) {
+  const meses = [
+    'janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho',
+    'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'
+  ];
+  const [ano, mes, dia] = dateStr.split('-');
+  return `${dia} de ${meses[parseInt(mes, 10) - 1]} de ${ano}`;
+}
+const formattedDate = formatDateBR(event.date);
   
   eventDiv.innerHTML = `
     <div class="timeline-card">
@@ -474,7 +476,7 @@ async function handleEventSubmit(e) {
     // Coleta dados do formulário
     const formData = {
       title: document.getElementById('eventTitle').value,
-      date: document.getElementById('eventDate').value,
+      date: document.getElementById('formatDateBr').value,
       location: document.getElementById('eventLocation').value,
       description: document.getElementById('eventDescription').value
     };
