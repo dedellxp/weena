@@ -270,7 +270,7 @@ function createTimelineEventElement(event, isLeft) {
   eventDiv.className = `timeline-event ${isLeft ? 'left' : 'right'}`;
   eventDiv.dataset.eventId = event.id;
   
- // Formata a data para exibição
+  // Formata a data para exibição
   const [year, month, day] = event.date.split('-');
   const eventDate = new Date(year, month - 1, day);
   const formattedDate = eventDate.toLocaleDateString({
@@ -475,7 +475,7 @@ async function handleEventSubmit(e) {
     // Coleta dados do formulário
     const formData = {
       title: document.getElementById('eventTitle').value,
-      date: document.getElementById('formatDateBr').value,
+      date: document.getElementById('eventDate').value,
       location: document.getElementById('eventLocation').value,
       description: document.getElementById('eventDescription').value
     };
